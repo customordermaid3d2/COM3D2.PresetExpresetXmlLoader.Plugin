@@ -48,6 +48,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         System.Windows.Forms.OpenFileDialog openDialog = new System.Windows.Forms.OpenFileDialog();
         System.Windows.Forms.SaveFileDialog saveDialog = new System.Windows.Forms.SaveFileDialog();
 
+
+        private int seleted;
+        private int all;
+
         internal static PresetExpresetXmlLoaderGUI Install(GameObject parent, ConfigFile config)
         {
             PresetExpresetXmlLoaderGUI.config = config;
@@ -68,8 +72,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
             openDialog.InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset");
             saveDialog.InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset");
-            openDialog.Filter = "files (*.preset.expreset.xml)|*.preset.expreset.xml";
-            saveDialog.Filter = "files (*.preset.expreset.xml)|*.preset.expreset.xml";
+            openDialog.Filter = "files (*.xml)|*.xml";
+            saveDialog.Filter = "files (*.xml)|*.xml";
         }
 
         public void OnEnable()
@@ -118,7 +122,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, "", GUI.skin.box);
         }
 
-
+        string[] type = new string[] { "one", "all" };
 
         public void WindowFunction(int id)
         {
@@ -151,31 +155,53 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("load"))
                 {
-
-
-                        if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (all == 0)
                         {
-                            Debug.Log("load : " + openDialog.FileName);
                             PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
                         }
-                    
+                        else
+                        {
+                            for (int i = 0; i < 18; i++)
+                                PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
+                        }
+                    }
+
                 }
                 if (GUILayout.Button("save"))
                 {
 
-                        if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {                        
+                        if (all == 0)
                         {
-                            Debug.Log("save : " + saveDialog.FileName);
-                            PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);
+                            PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);                            
                         }
-                    
+                        else
+                        {
+                            int s = saveDialog.FileName.LastIndexOf(".xml");
+                            for (int i = 0; i < 18; i++)
+                            {
+                                PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + PresetExpresetXmlLoaderPatch.maidNames[i]));
+                            }
+                        }
+                    }
+
                 }
 
                 GUILayout.EndHorizontal();
 
                 GUI.enabled = true;
-                GUILayout.Label("maid select" );
+                GUILayout.Label("option");
+                all = GUILayout.SelectionGrid(all, type, 2);
+                if (all == 1)
+                {
+                    GUI.enabled = false;
+                }
+                GUILayout.Label("maid select");
                 seleted = GUILayout.SelectionGrid(seleted, PresetExpresetXmlLoaderPatch.maidNames, 1);
+
 
                 GUILayout.EndScrollView();
             }
@@ -189,8 +215,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             PresetExpresetXmlLoaderGUI.myWindowRect.save();
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
         }
-
-        private int seleted;
 
     }
 }

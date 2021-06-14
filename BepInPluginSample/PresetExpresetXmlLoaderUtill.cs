@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
@@ -17,39 +18,30 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static void Load(int maid, string strFileName)
         {
-            if (PresetExpresetXmlLoaderPatch.maids[maid] == null)
-            {
-                return;
-            }
+            Debug.Log("Load : " + strFileName);
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(strFileName);
-
             if (xmlDocument == null)
             {
                 return;
             }
-
-            var nods = xmlDocument.SelectNodes("//plugin");
+            XmlNodeList nods = xmlDocument.SelectNodes("//plugin");
             if (nods == null || nods.Count == 0)
             {
                 return;
             }
-
+            if (PresetExpresetXmlLoaderPatch.maids[maid] == null)
+            {
+                return;
+            }
             for (int i = 0; i < nods.Count; i++)
             {
                 MyLog.LogMessage(nods[i].Attributes["name"].Value);
                 ExSaveData.SetXml(PresetExpresetXmlLoaderPatch.maids[maid], nods[i].Attributes["name"].Value, nods[i]);
             }
-
             MaidVoicePitch_UpdateSliders(PresetExpresetXmlLoaderPatch.maids[maid]);
-
-            //if (SceneManager.GetActiveScene().name == "SceneEdit")
-            {
-                //ExPreset.loadNotify.Invoke();
-                //CnvGui.ExPreset.loadNotify();
-            }
-
         }
+
 
         public static void MaidVoicePitch_UpdateSliders(Maid stockMaid)
         {
@@ -82,6 +74,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static void Save(int maid, string f_strFileName)
         {
+            Debug.Log("save : " + f_strFileName);
             if (PresetExpresetXmlLoaderPatch.maids[maid] == null)
             {
                 return;
