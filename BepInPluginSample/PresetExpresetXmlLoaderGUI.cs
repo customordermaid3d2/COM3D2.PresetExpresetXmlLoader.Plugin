@@ -3,19 +3,20 @@ using BepInEx.Configuration;
 using BepInPluginSample;
 using COM3D2.Lilly.Plugin;
 using COM3D2API;
+//using Ookii.Dialogs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
-    class PresetExpresetXmlLoaderGUI : MonoBehaviour
+    public class PresetExpresetXmlLoaderGUI : MonoBehaviour
     {
         public static PresetExpresetXmlLoaderGUI instance;
 
@@ -45,8 +46,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             set => IsGUIOn.Value = value;
         }
 
-        System.Windows.Forms.OpenFileDialog openDialog = new System.Windows.Forms.OpenFileDialog();
-        System.Windows.Forms.SaveFileDialog saveDialog = new System.Windows.Forms.SaveFileDialog();
+        public static System.Windows.Forms.OpenFileDialog openDialog;
+        public static System.Windows.Forms.SaveFileDialog saveDialog;
+        //VistaOpenFileDialog openDialog = new VistaOpenFileDialog();
+        //VistaSaveFileDialog saveDialog = new VistaSaveFileDialog();
 
 
         private int seleted;
@@ -59,26 +62,39 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             if (instance == null)
             {
                 instance = parent.AddComponent<PresetExpresetXmlLoaderGUI>();
-                MyLog.LogMessage("GameObjectMgr.Install", instance.name);
+                MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Install", instance.name);
             }
             return instance;
         }
 
         public void Awake()
         {
+            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
+
             myWindowRect = new MyWindowRect(config);
             IsGUIOn = config.Bind("GUI", "isGUIOn", false);
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
-            openDialog.InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset");
-            saveDialog.InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset");
-            openDialog.Filter = "files (*.xml)|*.xml";
-            saveDialog.Filter = "files (*.xml)|*.xml";
+
+
+            openDialog = new System.Windows.Forms.OpenFileDialog()
+            {
+                DefaultExt = "xml",
+                InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset"),
+                Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"
+            };
+            saveDialog = new System.Windows.Forms.SaveFileDialog()
+            {
+                DefaultExt = "xml",
+                InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset"),
+                Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"
+            };
+
         }
 
         public void OnEnable()
         {
-            MyLog.LogMessage("OnEnable");
+            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
             PresetExpresetXmlLoaderGUI.myWindowRect.load();
             SceneManager.sceneLoaded += this.OnSceneLoaded;
@@ -86,7 +102,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public void Start()
         {
-            MyLog.LogMessage("Start");
+            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
         }
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -155,39 +171,19 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("load"))
                 {
-                    if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (!isShowDialogLoadRun)
                     {
-                        if (all == 0)
-                        {
-                            PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < 18; i++)
-                                PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
-                        }
+                        //Task.Factory.StartNew(ShowDialogLoadRun);
+                        ShowDialogLoadRun();
                     }
-
                 }
                 if (GUILayout.Button("save"))
                 {
-
-                    if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {                        
-                        if (all == 0)
-                        {
-                            PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);                            
-                        }
-                        else
-                        {
-                            int s = saveDialog.FileName.LastIndexOf(".xml");
-                            for (int i = 0; i < 18; i++)
-                            {
-                                PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + PresetExpresetXmlLoaderPatch.maidNames[i]));
-                            }
-                        }
+                    if (!isShowDialogSaveRun)
+                    {
+                        //Task.Factory.StartNew(ShowDialogSaveRun);
+                        ShowDialogSaveRun();
                     }
-
                 }
 
                 GUILayout.EndHorizontal();
@@ -207,6 +203,48 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
             GUI.enabled = true;
             GUI.DragWindow(); // 창 드레그 가능하게 해줌. 마지막에만 넣어야함
+        }
+
+        static bool isShowDialogSaveRun = false;
+        static bool isShowDialogLoadRun = false;
+
+        private void ShowDialogSaveRun()
+        {
+            isShowDialogSaveRun = true;
+            if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (all == 0)
+                {
+                    PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);
+                }
+                else
+                {
+                    int s = saveDialog.FileName.LastIndexOf(".xml");
+                    for (int i = 0; i < 18; i++)
+                    {
+                        PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + PresetExpresetXmlLoaderPatch.maidNames[i]));
+                    }
+                }
+            }
+            isShowDialogSaveRun = false;
+        }
+
+        private void ShowDialogLoadRun()
+        {
+            isShowDialogLoadRun = true;
+            if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (all == 0)
+                {
+                    PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
+                }
+                else
+                {
+                    for (int i = 0; i < 18; i++)
+                        PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
+                }
+            }
+            isShowDialogLoadRun = false;
         }
 
         public void OnDisable()

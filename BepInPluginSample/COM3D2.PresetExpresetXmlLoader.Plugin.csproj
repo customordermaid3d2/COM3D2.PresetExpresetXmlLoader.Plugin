@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{22EEBF57-57FB-4FF6-A298-653F0DB3E029}</ProjectGuid>
+    <ProjectGuid>{221D5A0B-3C82-4640-AE59-D7754C630B86}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>COM3D2.PresetExpresetXmlLoader.Plugin</RootNamespace>
