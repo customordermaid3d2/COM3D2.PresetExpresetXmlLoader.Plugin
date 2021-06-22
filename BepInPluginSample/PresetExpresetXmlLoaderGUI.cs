@@ -55,6 +55,15 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         private int seleted;
         private int all;
 
+
+        /// <summary>
+        /// 부모 PresetExpresetXmlLoader 앤진? 에다가 PresetExpresetXmlLoaderGUI 앤진? 를 추가 시켜줌
+        /// 즉 부모는 부모대로 Awake Update 같은게 돟아가고
+        /// PresetExpresetXmlLoaderGUI 는 여기대로  Awake Update 가 돌아가게됨
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
         internal static PresetExpresetXmlLoaderGUI Install(GameObject parent, ConfigFile config)
         {
             PresetExpresetXmlLoaderGUI.config = config;
@@ -67,20 +76,37 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             return instance;
         }
 
+        /// <summary>
+        /// 아까 부모 PresetExpresetXmlLoader 에서 봤던 로직이랑 같음
+        /// </summary>
         public void Awake()
         {
             MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
             myWindowRect = new MyWindowRect(config);
-            IsGUIOn = config.Bind("GUI", "isGUIOn", false);
+            IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
+            // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
-            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
+           
+            // 이건 기어메뉴 아이콘
+            SystemShortcutAPI.AddButton(
+                MyAttribute.PLAGIN_FULL_NAME
+                , new Action(delegate () { // 기어메뉴 아이콘 클릭시 작동할 기능
+                    PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn; 
+                })
+                , MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString() // 표시될 툴팁 내용
+                // 표시될 아이콘
+                , MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
+                // 아이콘은 이렇게 추가함
 
-
+            // 파일 열기창 설정 부분. 이런건 구글링 하기
             openDialog = new System.Windows.Forms.OpenFileDialog()
             {
+                // 기본 확장자
                 DefaultExt = "xml",
+                // 기본 디렉토리
                 InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset"),
+                // 선택 가능 확장자
                 Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"
             };
             saveDialog = new System.Windows.Forms.SaveFileDialog()
@@ -91,12 +117,13 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             };
 
         }
+        // 이렇게 해서 플러그인 실행 직후는 작동 완료
 
         public void OnEnable()
         {
             MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            PresetExpresetXmlLoaderGUI.myWindowRect.load();
+            PresetExpresetXmlLoaderGUI.myWindowRect.load();// 이건 창 위치 설정하는건데 소스 열어서  다로 공부해볼것
             SceneManager.sceneLoaded += this.OnSceneLoaded;
         }
 
@@ -107,7 +134,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            PresetExpresetXmlLoaderGUI.myWindowRect.save();
+            PresetExpresetXmlLoaderGUI.myWindowRect.save();// 장면 이동시 GUI 창 위치 저장
         }
 
         private void Update()
@@ -120,13 +147,15 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             //{
             //    MyLog.LogMessage("IsPressed", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
             //}
-            if (ShowCounter.Value.IsUp())
+            // 단축키 눌렀을때 GUI 키고 끌수 있게 해주는 부분
+            if (ShowCounter.Value.IsUp())// 단축키가 일치할때
             {
-                isGUIOn = !isGUIOn;
-                MyLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
+                isGUIOn = !isGUIOn;// 보이거나 안보이게. 이런 배열이였네 지웠음
+                MyLog.LogMessage("IsUp",  ShowCounter.Value.MainKey);
             }
         }
 
+        // 매 화면 갱신할때마다(update 말하는게 아님)
         public void OnGUI()
         {
             if (!isGUIOn)
@@ -135,21 +164,26 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             //GUI.skin.window = ;
 
             //myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUI.skin.box);
+            // 별도 창을 띄우고 WindowFunction 를 실행함. 이건 스킨 설정 부분인데 따로 공부할것
             myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, "", GUI.skin.box);
         }
 
         string[] type = new string[] { "one", "all" };
 
+        // 창일 따로 뜬 부분에서 작동
         public void WindowFunction(int id)
         {
-            GUI.enabled = true;
+            GUI.enabled = true; // 기능 클릭 가능
 
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal();// 가로 정렬
+            // 라벨 추가
             GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUILayout.Height(20));
+            // 안쓰는 공간이 생기더라도 다른 기능으로 꽉 채우지 않고 빈공간 만들기
             GUILayout.FlexibleSpace();
+
             if (GUILayout.Button("-", GUILayout.Width(20), GUILayout.Height(20))) { IsOpen = !IsOpen; }
             if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20))) { isGUIOn = false; }
-            GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();// 가로 정렬 끝
 
             if (!IsOpen)
             {
@@ -157,8 +191,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
             else
             {
+                // 스크롤 영역
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
+                // 메이드가 있을때만 여기 아래 기능들 클릭 가능
                 GUI.enabled = PresetExpresetXmlLoaderPatch.maids[seleted] != null;
                 if (GUI.enabled)
                 {
@@ -190,12 +226,16 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
                 GUI.enabled = true;
                 GUILayout.Label("option");
+
                 all = GUILayout.SelectionGrid(all, type, 2);
                 if (all == 1)
                 {
                     GUI.enabled = false;
                 }
+
                 GUILayout.Label("maid select");
+                // 여기는 출력된 메이드들 이름만 가져옴
+                // seleted 가 이름 위치 번호만 가져온건데
                 seleted = GUILayout.SelectionGrid(seleted, PresetExpresetXmlLoaderPatch.maidNames, 1);
 
 
@@ -229,14 +269,18 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             isShowDialogSaveRun = false;
         }
 
+        /// <summary>
+        /// 원래 함수를 별도로 만든게 아닌데 오류땜에 뺏다가 현상 유지됨..
+        /// </summary>
         private void ShowDialogLoadRun()
         {
             isShowDialogLoadRun = true;
-            if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)// 오픈했을때
             {
                 if (all == 0)
                 {
                     PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
+                    // 파일 읽고 메이드에게 처리해주는 기능 
                 }
                 else
                 {
@@ -247,10 +291,22 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             isShowDialogLoadRun = false;
         }
 
+        /// <summary>
+        /// 게임 X 버튼 눌렀을때 반응
+        /// </summary>
+        public void OnApplicationQuit()
+        {
+            PresetExpresetXmlLoaderGUI.myWindowRect.save();
+            MyLog.LogMessage("OnApplicationQuit");
+        }
+
+        /// <summary>
+        /// 게임 종료시에도 호출됨
+        /// </summary>
         public void OnDisable()
         {
 
-            PresetExpresetXmlLoaderGUI.myWindowRect.save();
+            PresetExpresetXmlLoaderGUI.myWindowRect.save(); 
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
         }
 

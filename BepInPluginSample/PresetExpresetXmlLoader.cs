@@ -27,13 +27,22 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static PresetExpresetXmlLoader sample;
 
+        /// <summary>
+        /// 0.
+        /// 플러그인 로딩시 이부분이 가장 먼저 실행됨
+        /// </summary>
         public PresetExpresetXmlLoader()
         {
             sample = this;
         }
 
         /// <summary>
+        /// 1.
+        /// 그리고 베핀 플러그인에서 이부분을 실행
         ///  게임 실행시 한번만 실행됨
+        ///  유니티앤진에서 사용하는 함수라서 이와 관련된건
+        ///  https://docs.unity3d.com/kr/530/Manual/ExecutionOrder.html
+        ///  를 참조하면 제일 좋음
         /// </summary>
         public void Awake()
         {
@@ -48,7 +57,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         }
 
 
-
+        /// <summary>
+        /// 2. 그다음 플러그인을 켰을때 작동되는 함수
+        /// 나중에 플러그인 끄고 다시 켰을때 이함수가 다시 작동되니 여기에 뭘 넣을지는 잘 생각해야함
+        /// </summary>
         public void OnEnable()
         {
             MyLog.LogMessage("OnEnable");
@@ -56,17 +68,27 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             SceneManager.sceneLoaded += this.OnSceneLoaded;
 
             // 하모니 패치
+            // 이게 게임 원래 메소들을 해킹해서 값을 바꿔주게 해주는 역활
             harmony = Harmony.CreateAndPatchAll(typeof(PresetExpresetXmlLoaderPatch));
 
         }
 
         /// <summary>
+        /// 3. OnEnable 실행된후에 한번만 실행
+        /// OnEnable 이 몇번이나 실행되도 이건 플러그인 로딩 후에 한번만 실행되고 두번다시 실행 안됨
+        /// 보통 이게 작동되는 시점은 모든 플러그인이 초기화 되고 데이터를 다 불러온 후에 작동함
+        /// Awake 가 게임 킨 직후라면
+        /// Start 는 데이터를 다 불러온 후
         /// 게임 실행시 한번만 실행됨
         /// </summary>
         public void Start()
         {
             MyLog.LogMessage("Start");
 
+            // 어쨋든 기본 유니티 앤진 구조는 이러함
+            // 그리고 유니티 앤진 자체가 오브젝트 안에 오브젝트를 추가할수 있음
+            // 이게 그걸 이용한 방식
+            // 여기 안으로 들어가 보면
             PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
 
             //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
@@ -74,6 +96,16 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public string scene_name = string.Empty;
 
+        /// <summary>
+        /// 이건 장면이 바귀었을때마다 작동할 코드 작성
+        /// 보통 OnEnable 에다가 += this.OnSceneLoaded; 를 해주고
+        /// OnDisable 에다가 -= this.OnSceneLoaded; 를 해줌
+        /// 어지간하면 scene.buildIndex 는 쓰지 말자
+        /// scene.name 를 쓰자
+        /// buildIndex 는 게임 버전 바귈때마다 번호가 바귈 위험성이 매우큼
+        /// </summary>
+        /// <param name="scene"></param>
+        /// <param name="mode"></param>
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             MyLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
@@ -86,6 +118,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         }
 
+        /// <summary>
+        /// 여기는 게임 로직 부분
+        /// </summary>
         public void Update()
         {
             //if (ShowCounter.Value.IsDown())
@@ -102,20 +137,31 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             //}
         }
 
+        /// <summary>
+        /// 여기도 마찬가지
+        /// </summary>
         public void LateUpdate()
         {
 
         }
 
         
-
+        /// <summary>
+        /// 여기가 GUI 작성 부분
+        /// 지금 이 플러그인은 약간 특이하게 다른족에서 GUI 불러들임
+        /// 자세한건 위에 다시 설명해줌
+        /// </summary>
         public void OnGUI()
         {
           
         }
 
 
-
+        /// <summary>
+        /// 플러그인 껏을때 작동
+        /// 게임에서 F1 누르면 나오는 베핀플러그인 메니저 띄우면
+        /// 활성 비활성 시켜주는 옵션도 있는데 내가 이 플러그인은 그걸 추가 안했네..
+        /// </summary>
         public void OnDisable()
         {
             MyLog.LogMessage("OnDisable");

@@ -69,5 +69,15 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap Image11253415 {
+            get {
+                object obj = ResourceManager.GetObject("Image11253415", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

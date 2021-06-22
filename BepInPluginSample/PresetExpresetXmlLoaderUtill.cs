@@ -72,6 +72,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
         }
 
+        /// <summary>
+        /// xml 파일로 저장
+        /// </summary>
+        /// <param name="maid">선택된 grid 위치 번호</param>
+        /// <param name="f_strFileName">저장될 파일명</param>
         public static void Save(int maid, string f_strFileName)
         {
             Debug.Log("save : " + f_strFileName);
@@ -101,7 +106,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
             if (flag2)
             {
-                xmlDocument.Save(f_strFileName);
+                xmlDocument.Save(f_strFileName);// 실제로 저장됨
             }
 
         }
