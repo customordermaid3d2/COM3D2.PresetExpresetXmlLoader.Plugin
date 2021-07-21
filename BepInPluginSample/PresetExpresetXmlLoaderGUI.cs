@@ -83,7 +83,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         {
             MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            myWindowRect = new MyWindowRect(config);
+            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME);
             IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
             // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
