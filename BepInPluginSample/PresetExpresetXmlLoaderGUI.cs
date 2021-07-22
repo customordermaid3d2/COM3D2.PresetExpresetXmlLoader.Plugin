@@ -30,10 +30,26 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         // 위치 저장용 테스트 json
         public static MyWindowRect myWindowRect;
 
-        public static bool IsOpen
+        public string windowName= MyAttribute.PLAGIN_NAME;
+        public string FullName= MyAttribute.PLAGIN_NAME;
+        public string ShortName="PEXL";
+
+
+        public bool IsOpen
         {
             get => myWindowRect.IsOpen;
-            set => myWindowRect.IsOpen = value;
+            set
+            {
+                myWindowRect.IsOpen = value;
+                if (value)
+                {
+                    windowName = FullName;
+                }
+                else
+                {
+                    windowName = ShortName;
+                }
+            }
         }
 
         // GUI ON OFF 설정파일로 저장
@@ -176,7 +192,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
             GUILayout.BeginHorizontal();// 가로 정렬
             // 라벨 추가
-            GUILayout.Label(MyAttribute.PLAGIN_NAME , GUILayout.Height(20));
+            GUILayout.Label( windowName, GUILayout.Height(20));
             // 안쓰는 공간이 생기더라도 다른 기능으로 꽉 채우지 않고 빈공간 만들기
             GUILayout.FlexibleSpace();
 
@@ -194,7 +210,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
                 // 메이드가 있을때만 여기 아래 기능들 클릭 가능
-                GUI.enabled = LillyUtill.MaidActivePatch.maids[seleted] != null;
+                //GUI.enabled = LillyUtill.MaidActivePatch.maids[seleted] != null;
                 if (GUI.enabled)
                 {
                     GUILayout.Label("");
