@@ -1,6 +1,6 @@
 ﻿using CM3D2.ExternalPreset.Managed;
 using CM3D2.ExternalSaveData.Managed;
-using COM3D2.Lilly.Plugin;
+using COM3D2.LillyUtill;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static void Load(int maid, string strFileName)
         {
-            Debug.Log("Load : " + strFileName);
+            //MyLog.LogMessage("Load : " + strFileName);
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(strFileName);
             if (xmlDocument == null)
@@ -30,16 +30,16 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 return;
             }
-            if (PresetExpresetXmlLoaderPatch.maids[maid] == null)
+            if (LillyUtill.MaidActivePatch.maids[maid] == null)
             {
                 return;
             }
             for (int i = 0; i < nods.Count; i++)
             {
-                MyLog.LogMessage(nods[i].Attributes["name"].Value);
-                ExSaveData.SetXml(PresetExpresetXmlLoaderPatch.maids[maid], nods[i].Attributes["name"].Value, nods[i]);
+                //MyLog.LogMessage(nods[i].Attributes["name"].Value);
+                ExSaveData.SetXml(LillyUtill.MaidActivePatch.maids[maid], nods[i].Attributes["name"].Value, nods[i]);
             }
-            MaidVoicePitch_UpdateSliders(PresetExpresetXmlLoaderPatch.maids[maid]);
+            MaidVoicePitch_UpdateSliders(LillyUtill.MaidActivePatch.maids[maid]);
         }
 
 
@@ -79,8 +79,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="f_strFileName">저장될 파일명</param>
         public static void Save(int maid, string f_strFileName)
         {
-            Debug.Log("save : " + f_strFileName);
-            if (PresetExpresetXmlLoaderPatch.maids[maid] == null)
+           // MyLog.LogMessage("save : " + f_strFileName);
+            if (LillyUtill.MaidActivePatch.maids[maid] == null)
             {
                 return;
             }
@@ -98,7 +98,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 XmlElement xmlElement = xmlDocument.CreateElement("plugin");
 
-                if (ExSaveData.TryGetXml(PresetExpresetXmlLoaderPatch.maids[maid], pluginName, xmlElement))
+                if (ExSaveData.TryGetXml(LillyUtill.MaidActivePatch.maids[maid], pluginName, xmlElement))
                 {
                     xmlNode.AppendChild(xmlElement);
                     flag2 = true;

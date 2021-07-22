@@ -37,6 +37,7 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\_lib2\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>lib\Assembly-CSharp-firstpass.dll</HintPath>
@@ -56,6 +57,10 @@
     </Reference>
     <Reference Include="COM3D2.ExternalSaveData.Managed">
       <HintPath>..\..\_lib2\COM3D2.ExternalSaveData.Managed.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="COM3D2.LillyUtill">
+      <HintPath>..\..\_lib2\COM3D2.LillyUtill.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -81,9 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MyAttribute.cs" />
-    <Compile Include="MyLog.cs" />
-    <Compile Include="MyUtill.cs" />
-    <Compile Include="MyWindowRect.cs" />
     <Compile Include="PresetExpresetXmlLoaderUtill.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -93,7 +95,6 @@
     <Compile Include="PresetExpresetXmlLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PresetExpresetXmlLoaderGUI.cs" />
-    <Compile Include="PresetExpresetXmlLoaderPatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

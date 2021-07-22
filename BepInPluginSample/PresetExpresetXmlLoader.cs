@@ -1,6 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using COM3D2.Lilly.Plugin;
+using COM3D2.LillyUtill;
 using COM3D2API;
 using HarmonyLib;
 using Newtonsoft.Json;
@@ -23,9 +23,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         // 단축키 설정파일로 연동
         //private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
 
-        Harmony harmony;
+        //Harmony harmony;
 
         public static PresetExpresetXmlLoader sample;
+
+        public static MyLog myLog = new MyLog(MyAttribute.PLAGIN_NAME);
 
         /// <summary>
         /// 0.
@@ -46,7 +48,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void Awake()
         {
-            MyLog.LogMessage("Awake");
+            myLog.LogMessage("Awake");
 
             // 단축키 기본값 설정
             //ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
@@ -63,13 +65,13 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void OnEnable()
         {
-            MyLog.LogMessage("OnEnable");
+            myLog.LogMessage("OnEnable");
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
 
             // 하모니 패치
             // 이게 게임 원래 메소들을 해킹해서 값을 바꿔주게 해주는 역활
-            harmony = Harmony.CreateAndPatchAll(typeof(PresetExpresetXmlLoaderPatch));
+            //harmony = Harmony.CreateAndPatchAll(typeof(PresetExpresetXmlLoaderPatch));
 
         }
 
@@ -83,7 +85,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void Start()
         {
-            MyLog.LogMessage("Start");
+            myLog.LogMessage("Start");
 
             // 어쨋든 기본 유니티 앤진 구조는 이러함
             // 그리고 유니티 앤진 자체가 오브젝트 안에 오브젝트를 추가할수 있음
@@ -108,7 +110,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="mode"></param>
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            MyLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
+            myLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
             //  scene.buildIndex 는 쓰지 말자 제발
             scene_name = scene.name;
         }
@@ -164,27 +166,27 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void OnDisable()
         {
-            MyLog.LogMessage("OnDisable");
+            myLog.LogMessage("OnDisable");
 
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
-            harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
+            //harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
             //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
         }
 
         public void Pause()
         {
-            MyLog.LogMessage("Pause");
+            myLog.LogMessage("Pause");
         }
 
         public void Resume()
         {
-            MyLog.LogMessage("Resume");
+            myLog.LogMessage("Resume");
         }
 
         public void OnApplicationQuit()
         {
-            MyLog.LogMessage("OnApplicationQuit");
+            myLog.LogMessage("OnApplicationQuit");
         }
 
     }

@@ -1,4 +1,4 @@
-﻿using COM3D2.Lilly.Plugin;
+﻿using COM3D2.LillyUtill;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 maidNames[f_nActiveSlotNo] = f_maid.status.fullNameEnStyle;
                 
             }
-            MyLog.LogMessage("CharacterMgr.SetActive", f_nActiveSlotNo, f_bMan, f_maid.status.fullNameEnStyle);
+            //MyLog.LogMessage("CharacterMgr.SetActive", f_nActiveSlotNo, f_bMan, f_maid.status.fullNameEnStyle);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 maids[f_nActiveSlotNo] = null;
                 maidNames[f_nActiveSlotNo] = string.Empty;
             }
-            MyLog.LogMessage("CharacterMgr.Deactivate", f_nActiveSlotNo, f_bMan);
+            //MyLog.LogMessage("CharacterMgr.Deactivate", f_nActiveSlotNo, f_bMan);
         }
     }
 }

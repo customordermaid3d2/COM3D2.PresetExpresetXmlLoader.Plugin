@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using BepInPluginSample;
-using COM3D2.Lilly.Plugin;
+using COM3D2.LillyUtill;
 using COM3D2API;
 //using Ookii.Dialogs;
 using System;
@@ -71,7 +70,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             if (instance == null)
             {
                 instance = parent.AddComponent<PresetExpresetXmlLoaderGUI>();
-                MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Install", instance.name);
+                //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Install", instance.name);
             }
             return instance;
         }
@@ -81,7 +80,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void Awake()
         {
-            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
+            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
             myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME);
             IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
@@ -121,7 +120,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public void OnEnable()
         {
-            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
+            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
             PresetExpresetXmlLoaderGUI.myWindowRect.load();// 이건 창 위치 설정하는건데 소스 열어서  다로 공부해볼것
             SceneManager.sceneLoaded += this.OnSceneLoaded;
@@ -129,7 +128,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public void Start()
         {
-            MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
+            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
         }
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -151,7 +150,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             if (ShowCounter.Value.IsUp())// 단축키가 일치할때
             {
                 isGUIOn = !isGUIOn;// 보이거나 안보이게. 이런 배열이였네 지웠음
-                MyLog.LogMessage("IsUp",  ShowCounter.Value.MainKey);
+                //MyLog.LogMessage("IsUp",  ShowCounter.Value.MainKey);
             }
         }
 
@@ -177,7 +176,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
             GUILayout.BeginHorizontal();// 가로 정렬
             // 라벨 추가
-            GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUILayout.Height(20));
+            GUILayout.Label(MyAttribute.PLAGIN_NAME , GUILayout.Height(20));
             // 안쓰는 공간이 생기더라도 다른 기능으로 꽉 채우지 않고 빈공간 만들기
             GUILayout.FlexibleSpace();
 
@@ -195,7 +194,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
                 // 메이드가 있을때만 여기 아래 기능들 클릭 가능
-                GUI.enabled = PresetExpresetXmlLoaderPatch.maids[seleted] != null;
+                GUI.enabled = LillyUtill.MaidActivePatch.maids[seleted] != null;
                 if (GUI.enabled)
                 {
                     GUILayout.Label("");
@@ -236,7 +235,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 GUILayout.Label("maid select");
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
-                seleted = GUILayout.SelectionGrid(seleted, PresetExpresetXmlLoaderPatch.maidNames, 1);
+                seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
 
 
                 GUILayout.EndScrollView();
@@ -262,7 +261,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                     int s = saveDialog.FileName.LastIndexOf(".xml");
                     for (int i = 0; i < 18; i++)
                     {
-                        PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + PresetExpresetXmlLoaderPatch.maidNames[i]));
+                        PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + LillyUtill.MaidActivePatch.maidNames[i]));
                     }
                 }
             }
@@ -297,7 +296,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public void OnApplicationQuit()
         {
             PresetExpresetXmlLoaderGUI.myWindowRect.save();
-            MyLog.LogMessage("OnApplicationQuit");
+            //MyLog.LogMessage("OnApplicationQuit");
         }
 
         /// <summary>
