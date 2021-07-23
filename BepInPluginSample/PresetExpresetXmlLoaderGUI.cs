@@ -30,9 +30,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         // 위치 저장용 테스트 json
         public static MyWindowRect myWindowRect;
 
-        public string windowName= MyAttribute.PLAGIN_NAME;
-        public string FullName= MyAttribute.PLAGIN_NAME;
-        public string ShortName="PEXL";
+        //public string windowName= MyAttribute.PLAGIN_NAME;
+        //public string FullName= MyAttribute.PLAGIN_NAME;
+        //public string ShortName="PEXL";
 
 
         public bool IsOpen
@@ -41,14 +41,14 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             set
             {
                 myWindowRect.IsOpen = value;
-                if (value)
-                {
-                    windowName = FullName;
-                }
-                else
-                {
-                    windowName = ShortName;
-                }
+                //if (value)
+                //{
+                //    windowName = FullName;
+                //}
+                //else
+                //{
+                //    windowName = ShortName;
+                //}
             }
         }
 
@@ -98,7 +98,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         {
             //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME);
+            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME,"PEXL");
             IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
             // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
@@ -192,7 +192,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
             GUILayout.BeginHorizontal();// 가로 정렬
             // 라벨 추가
-            GUILayout.Label( windowName, GUILayout.Height(20));
+            GUILayout.Label(myWindowRect.windowName, GUILayout.Height(20));
             // 안쓰는 공간이 생기더라도 다른 기능으로 꽉 채우지 않고 빈공간 만들기
             GUILayout.FlexibleSpace();
 
