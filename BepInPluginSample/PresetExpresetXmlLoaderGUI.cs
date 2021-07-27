@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using CM3D2.ExternalSaveData.Managed;
 using COM3D2.LillyUtill;
 using COM3D2API;
 //using Ookii.Dialogs;
@@ -67,7 +68,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         //VistaSaveFileDialog saveDialog = new VistaSaveFileDialog();
 
 
-        private int seleted;
+        public static int seleted;
         private int all;
 
 
@@ -98,21 +99,23 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         {
             //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME,"PEXL");
+            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "PEXL");
             IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
             // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
-           
+
             // 이건 기어메뉴 아이콘
             SystemShortcutAPI.AddButton(
                 MyAttribute.PLAGIN_FULL_NAME
-                , new Action(delegate () { // 기어메뉴 아이콘 클릭시 작동할 기능
-                    PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn; 
+                , new Action(delegate ()
+                { // 기어메뉴 아이콘 클릭시 작동할 기능
+                    PresetExpresetXmlLoader.myLog.LogMessage("SystemShortcutAPI.AddButton", MyAttribute.PLAGIN_FULL_NAME, PresetExpresetXmlLoaderGUI.isGUIOn);
+                    PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn;
                 })
                 , MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString() // 표시될 툴팁 내용
-                // 표시될 아이콘
+                                                                                 // 표시될 아이콘
                 , MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
-                // 아이콘은 이렇게 추가함
+            // 아이콘은 이렇게 추가함
 
             // 파일 열기창 설정 부분. 이런건 구글링 하기
             openDialog = new System.Windows.Forms.OpenFileDialog()
@@ -243,15 +246,50 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 GUILayout.Label("option");
 
                 all = GUILayout.SelectionGrid(all, type, 2);
-                if (all == 1)
-                {
-                    GUI.enabled = false;
-                }
+                //if (all == 1)
+                //{
+                //    GUI.enabled = false;
+                //}
 
-                GUILayout.Label("maid select");
+                //GUILayout.Label("maid select");
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
-                seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
+                //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
+                seleted = MaidActivePatch.SelectionGrid(seleted, 3, false);
+
+                GUI.enabled = true;
+                GUILayout.Label("edit");
+
+                if (MaidActivePatch.maids[seleted] != null)
+                {
+                    foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
+                    {
+                        itemp.enable = GUILayout.Toggle(itemp.enable, itemp.name);
+
+                        if (GUI.changed)
+                        {
+                            result = ExSaveData.SetBool(MaidActivePatch.maids[seleted], "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
+                            PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetBool", result, itemp.items.Count());
+                            MaidActivePatch.maids[seleted].body0.bonemorph.Blend();
+                            GUI.changed = false;
+                        }
+
+                        if (itemp.enable)
+                        {
+                            foreach (var item in itemp.items)
+                            {
+                                item.value = GUILayout.HorizontalSlider(item.value, 0, 2f);
+                                if (GUI.changed)
+                                {
+                                    result = ExSaveData.SetFloat(MaidActivePatch.maids[seleted], "CM3D2.MaidVoicePitch", item.name, item.value, true);
+                                    PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetFloat", result, item.value);
+                                    MaidActivePatch.maids[seleted].body0.bonemorph.Blend();
+                                    GUI.changed = false;
+                                }
+                            }
+                        }
+                    }
+                }
 
 
                 GUILayout.EndScrollView();
@@ -262,6 +300,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         static bool isShowDialogSaveRun = false;
         static bool isShowDialogLoadRun = false;
+        private bool result;
 
         private void ShowDialogSaveRun()
         {
@@ -321,7 +360,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public void OnDisable()
         {
 
-            PresetExpresetXmlLoaderGUI.myWindowRect.save(); 
+            PresetExpresetXmlLoaderGUI.myWindowRect.save();
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
         }
 

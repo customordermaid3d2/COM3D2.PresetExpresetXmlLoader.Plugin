@@ -15,6 +15,13 @@ using UnityEngine.SceneManagement;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
+    class MyAttribute
+    {
+        public const string PLAGIN_NAME = "PresetExpresetXmlLoader";
+        public const string PLAGIN_VERSION = "21.7.27";
+        public const string PLAGIN_FULL_NAME = "COM3D2.PresetExpresetXmlLoader.Plugin";
+    }
+
     [BepInPlugin(MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, MyAttribute.PLAGIN_VERSION)]// 버전 규칙 잇음. 반드시 2~4개의 숫자구성으로 해야함. 미준수시 못읽어들임
     //[BepInPlugin("COM3D2.Sample.Plugin", "COM3D2.Sample.Plugin", "21.6.6")]// 버전 규칙 잇음. 반드시 2~4개의 숫자구성으로 해야함. 미준수시 못읽어들임
     [BepInProcess("COM3D2x64.exe")]
@@ -36,6 +43,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public PresetExpresetXmlLoader()
         {
             sample = this;
+
+            PresetExpresetXmlLoaderUtill.init();
         }
 
         /// <summary>
@@ -91,8 +100,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             // 그리고 유니티 앤진 자체가 오브젝트 안에 오브젝트를 추가할수 있음
             // 이게 그걸 이용한 방식
             // 여기 안으로 들어가 보면
-            PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
 
+            PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
+            MaidActivePatch.selectionGrid += PresetExpresetXmlLoaderUtill.SetMaid;
+            MaidActivePatch.setActiveMaid += PresetExpresetXmlLoaderUtill.SetMaid2;
             //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
         }
 
