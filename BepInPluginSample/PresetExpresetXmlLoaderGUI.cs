@@ -213,7 +213,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
                 // 메이드가 있을때만 여기 아래 기능들 클릭 가능
-                //GUI.enabled = LillyUtill.MaidActivePatch.maids[seleted] != null;
+                //GUI.enabled = LillyUtill.MaidActivePatch.GetMaid(seleted) != null;
                 if (GUI.enabled)
                 {
                     GUILayout.Label("");
@@ -255,12 +255,12 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
                 //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
-                seleted = MaidActivePatch.SelectionGrid(seleted, 3, false);
+                seleted = MaidActivePatch.SelectionGrid(seleted, 3,265, false);
 
                 GUI.enabled = true;
                 GUILayout.Label("edit");
-
-                if (MaidActivePatch.maids[seleted] != null)
+                Maid maid = MaidActivePatch.GetMaid(seleted);
+                if (maid != null)
                 {
                     foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
                     {
@@ -268,9 +268,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
                         if (GUI.changed)
                         {
-                            result = ExSaveData.SetBool(MaidActivePatch.maids[seleted], "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
+                            result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
                             PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetBool", result, itemp.items.Count());
-                            MaidActivePatch.maids[seleted].body0.bonemorph.Blend();
+                            maid.body0.bonemorph.Blend();
                             GUI.changed = false;
                         }
 
@@ -281,9 +281,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                                 item.value = GUILayout.HorizontalSlider(item.value, 0, 2f);
                                 if (GUI.changed)
                                 {
-                                    result = ExSaveData.SetFloat(MaidActivePatch.maids[seleted], "CM3D2.MaidVoicePitch", item.name, item.value, true);
+                                    result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value, true);
                                     PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetFloat", result, item.value);
-                                    MaidActivePatch.maids[seleted].body0.bonemorph.Blend();
+                                    maid.body0.bonemorph.Blend();
                                     GUI.changed = false;
                                 }
                             }

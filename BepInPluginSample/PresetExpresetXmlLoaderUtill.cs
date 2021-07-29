@@ -274,12 +274,13 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static void SetMaid()
         {
-            SetMaid(LillyUtill.MaidActivePatch.maids[PresetExpresetXmlLoaderGUI.seleted]);
+            //MaidActivePatch.GetMaid(seleted)
+            SetMaid(LillyUtill.MaidActivePatch.GetMaid(PresetExpresetXmlLoaderGUI.seleted));
         }
 
         public static void SetMaid2(Maid maid)
         {
-            if(LillyUtill.MaidActivePatch.maids[PresetExpresetXmlLoaderGUI.seleted]== maid)
+            if(LillyUtill.MaidActivePatch.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
             {
                 PresetExpresetXmlLoader.myLog.LogMessage("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
                 SetMaid(maid);
@@ -325,16 +326,17 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 return;
             }
-            if (LillyUtill.MaidActivePatch.maids[maid] == null)
+            Maid maid1 = MaidActivePatch.GetMaid(maid);
+            if (maid1 == null)
             {
                 return;
             }
             for (int i = 0; i < nods.Count; i++)
             {
                 PresetExpresetXmlLoader.myLog.LogMessage(nods[i].Attributes["name"].Value);
-                ExSaveData.SetXml(LillyUtill.MaidActivePatch.maids[maid], nods[i].Attributes["name"].Value, nods[i]);
+                ExSaveData.SetXml(maid1, nods[i].Attributes["name"].Value, nods[i]);
             }
-            LillyUtill.MaidActivePatch.maids[maid].body0.bonemorph.Blend();
+            maid1.body0.bonemorph.Blend();
             //MaidVoicePitch_UpdateSliders(LillyUtill.MaidActivePatch.maids[maid]);
         }
 
@@ -376,7 +378,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public static void Save(int maid, string f_strFileName)
         {
             // MyLog.LogMessage("save : " + f_strFileName);
-            if (LillyUtill.MaidActivePatch.maids[maid] == null)
+            Maid maid1 = MaidActivePatch.GetMaid(maid);
+            if (maid1 == null)
             {
                 return;
             }
@@ -394,7 +397,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 XmlElement xmlElement = xmlDocument.CreateElement("plugin");
 
-                if (ExSaveData.TryGetXml(LillyUtill.MaidActivePatch.maids[maid], pluginName, xmlElement))
+                if (ExSaveData.TryGetXml(maid1, pluginName, xmlElement))
                 {
                     xmlNode.AppendChild(xmlElement);
                     flag2 = true;
