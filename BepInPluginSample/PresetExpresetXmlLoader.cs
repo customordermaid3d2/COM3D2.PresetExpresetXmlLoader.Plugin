@@ -34,7 +34,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static PresetExpresetXmlLoader sample;
 
-        public static MyLog myLog = new MyLog(MyAttribute.PLAGIN_NAME);
+        public static MyLog myLog;
 
         /// <summary>
         /// 0.
@@ -43,7 +43,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public PresetExpresetXmlLoader()
         {
             sample = this;
-
+            myLog = new MyLog(Logger ,Config );
             PresetExpresetXmlLoaderUtill.init();
         }
 
@@ -121,15 +121,15 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="mode"></param>
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            myLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
+            myLog.LogInfo("OnSceneLoaded", scene.name, scene.buildIndex);
             //  scene.buildIndex 는 쓰지 말자 제발
             scene_name = scene.name;
         }
 
-        public void FixedUpdate()
-        {
-
-        }
+       // public void FixedUpdate()
+       // {
+       //
+       // }
 
         /// <summary>
         /// 여기는 게임 로직 부분
@@ -153,10 +153,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <summary>
         /// 여기도 마찬가지
         /// </summary>
-        public void LateUpdate()
-        {
-
-        }
+      // public void LateUpdate()
+      // {
+      //
+      // }
 
         
         /// <summary>
@@ -164,10 +164,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// 지금 이 플러그인은 약간 특이하게 다른족에서 GUI 불러들임
         /// 자세한건 위에 다시 설명해줌
         /// </summary>
-        public void OnGUI()
-        {
-          
-        }
+       // public void OnGUI()
+       // {
+       //   
+       // }
 
 
         /// <summary>
@@ -183,21 +183,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
             //harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
             //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
-        }
-
-        public void Pause()
-        {
-            myLog.LogMessage("Pause");
-        }
-
-        public void Resume()
-        {
-            myLog.LogMessage("Resume");
-        }
-
-        public void OnApplicationQuit()
-        {
-            myLog.LogMessage("OnApplicationQuit");
         }
 
     }

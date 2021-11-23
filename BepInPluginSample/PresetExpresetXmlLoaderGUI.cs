@@ -109,7 +109,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 MyAttribute.PLAGIN_FULL_NAME
                 , new Action(delegate ()
                 { // 기어메뉴 아이콘 클릭시 작동할 기능
-                    PresetExpresetXmlLoader.myLog.LogMessage("SystemShortcutAPI.AddButton", MyAttribute.PLAGIN_FULL_NAME, PresetExpresetXmlLoaderGUI.isGUIOn);
+                    PresetExpresetXmlLoader.myLog.LogInfo("SystemShortcutAPI.AddButton", MyAttribute.PLAGIN_FULL_NAME, PresetExpresetXmlLoaderGUI.isGUIOn);
                     PresetExpresetXmlLoaderGUI.isGUIOn = !PresetExpresetXmlLoaderGUI.isGUIOn;
                 })
                 , MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString() // 표시될 툴팁 내용
@@ -269,7 +269,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                         if (GUI.changed)
                         {
                             result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
-                            PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetBool", result, itemp.items.Count());
+                            PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetBool", result, itemp.items.Count());
                             maid.body0.bonemorph.Blend();
                             GUI.changed = false;
                         }
@@ -282,7 +282,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                                 if (GUI.changed)
                                 {
                                     result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value, true);
-                                    PresetExpresetXmlLoader.myLog.LogMessage("ExSaveData.SetFloat", result, item.value);
+                                    PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetFloat", result, item.value);
                                     maid.body0.bonemorph.Blend();
                                     GUI.changed = false;
                                 }

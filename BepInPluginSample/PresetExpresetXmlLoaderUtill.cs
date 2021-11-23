@@ -258,7 +258,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 ));
             }
 
-            PresetExpresetXmlLoader.myLog.LogMessage(itemps.Count());
+            PresetExpresetXmlLoader.myLog.LogInfo(itemps.Count());
             
 
         }
@@ -282,7 +282,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         {
             if(LillyUtill.MaidActivePatch.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
             {
-                PresetExpresetXmlLoader.myLog.LogMessage("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
+                PresetExpresetXmlLoader.myLog.LogInfo("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
                 SetMaid(maid);
             }
         }
@@ -292,17 +292,17 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             //var maid = LillyUtill.MaidActivePatch.maids[PresetExpresetXmlLoaderGUI.seleted];
             if (maid == null)
             {
-                PresetExpresetXmlLoader.myLog.LogMessage("SetMaid null");
+                PresetExpresetXmlLoader.myLog.LogWarning("SetMaid null");
                 return;
             }            
             
-            PresetExpresetXmlLoader.myLog.LogMessage("SetMaid-1",maid.status.fullNameEnStyle, itemps.Count());
+            PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-1",maid.status.fullNameEnStyle, itemps.Count());
             
             foreach (var itemp in itemps)
             {
                 itemp.enable = ExSaveData.GetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, false);
 
-                PresetExpresetXmlLoader.myLog.LogMessage("SetMaid-2",maid.status.fullNameEnStyle, itemp.name, itemp.items.Count());
+                PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-2",maid.status.fullNameEnStyle, itemp.name, itemp.items.Count());
                 foreach (Item item in itemp.items)
                 {
                     item.value=ExSaveData.GetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.defult);
@@ -333,7 +333,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
             for (int i = 0; i < nods.Count; i++)
             {
-                PresetExpresetXmlLoader.myLog.LogMessage(nods[i].Attributes["name"].Value);
+                PresetExpresetXmlLoader.myLog.LogInfo(nods[i].Attributes["name"].Value);
                 ExSaveData.SetXml(maid1, nods[i].Attributes["name"].Value, nods[i]);
             }
             maid1.body0.bonemorph.Blend();
