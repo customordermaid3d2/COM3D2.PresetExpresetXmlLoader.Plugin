@@ -55,17 +55,17 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         ///  https://docs.unity3d.com/kr/530/Manual/ExecutionOrder.html
         ///  를 참조하면 제일 좋음
         /// </summary>
-        public void Awake()
-        {
-            myLog.LogMessage("Awake");
-
-            // 단축키 기본값 설정
-            //ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
-
-            
-
-            // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
-        }
+       //public void Awake()
+       //{
+       //    myLog.LogMessage("Awake");
+       //
+       //    // 단축키 기본값 설정
+       //    //ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+       //
+       //    
+       //
+       //    // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
+       //}
 
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             // 여기 안으로 들어가 보면
 
             PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
-            MaidActivePatch.selectionGrid += PresetExpresetXmlLoaderUtill.SetMaid;
+            MaidActivePatch.selectionGrid2 += PresetExpresetXmlLoaderUtill.SetMaid;
             MaidActivePatch.setActiveMaid += PresetExpresetXmlLoaderUtill.SetMaid2;
             //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
         }

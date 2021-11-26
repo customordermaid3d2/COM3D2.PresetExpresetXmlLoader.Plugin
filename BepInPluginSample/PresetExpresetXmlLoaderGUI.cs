@@ -142,18 +142,18 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
             PresetExpresetXmlLoaderGUI.myWindowRect.load();// 이건 창 위치 설정하는건데 소스 열어서  다로 공부해볼것
-            SceneManager.sceneLoaded += this.OnSceneLoaded;
+            //SceneManager.sceneLoaded += this.OnSceneLoaded;
         }
 
-        public void Start()
-        {
-            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
-        }
+       //public void Start()
+       //{
+       //    //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
+       //}
 
-        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            PresetExpresetXmlLoaderGUI.myWindowRect.save();// 장면 이동시 GUI 창 위치 저장
-        }
+        //public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        //{
+        //    PresetExpresetXmlLoaderGUI.myWindowRect.save();// 장면 이동시 GUI 창 위치 저장
+        //}
 
         private void Update()
         {
@@ -255,7 +255,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
                 //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
-                seleted = MaidActivePatch.SelectionGrid(seleted, 3,265, false);
+                seleted = MaidActivePatch.SelectionGrid2(seleted, 3, 265, false);
 
                 GUI.enabled = true;
                 GUILayout.Label("edit");
@@ -348,21 +348,21 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <summary>
         /// 게임 X 버튼 눌렀을때 반응
         /// </summary>
-        public void OnApplicationQuit()
-        {
-            PresetExpresetXmlLoaderGUI.myWindowRect.save();
-            //MyLog.LogMessage("OnApplicationQuit");
-        }
+       //public void OnApplicationQuit()
+       //{
+       //    PresetExpresetXmlLoaderGUI.myWindowRect.save();
+       //    //MyLog.LogMessage("OnApplicationQuit");
+       //}
 
         /// <summary>
         /// 게임 종료시에도 호출됨
         /// </summary>
-        public void OnDisable()
-        {
-
-            PresetExpresetXmlLoaderGUI.myWindowRect.save();
-            SceneManager.sceneLoaded -= this.OnSceneLoaded;
-        }
+       // public void OnDisable()
+       // {
+       //
+       //     PresetExpresetXmlLoaderGUI.myWindowRect.save();
+       //     SceneManager.sceneLoaded -= this.OnSceneLoaded;
+       // }
 
     }
 }

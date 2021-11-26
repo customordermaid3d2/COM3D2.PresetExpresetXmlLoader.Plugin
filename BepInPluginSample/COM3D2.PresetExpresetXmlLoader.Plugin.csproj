@@ -107,6 +107,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)*.dll" "C:\Downloads\plugin"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)*.dll" "C:\Downloads\plugin"
+copy "$(TargetDir)*.dll" "F:\COM3D2\BepinEx\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

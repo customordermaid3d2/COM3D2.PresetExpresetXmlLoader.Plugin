@@ -272,10 +272,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 ));
         }
 
-        public static void SetMaid()
+        public static void SetMaid(int seleted)
         {
             //MaidActivePatch.GetMaid(seleted)
-            SetMaid(LillyUtill.MaidActivePatch.GetMaid(PresetExpresetXmlLoaderGUI.seleted));
+            SetMaid(LillyUtill.MaidActivePatch.GetMaid(seleted));
         }
 
         public static void SetMaid2(Maid maid)
