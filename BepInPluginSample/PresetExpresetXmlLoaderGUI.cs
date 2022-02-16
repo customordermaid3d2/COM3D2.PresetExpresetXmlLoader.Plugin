@@ -305,20 +305,29 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         private void ShowDialogSaveRun()
         {
             isShowDialogSaveRun = true;
-            if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            try
             {
-                if (all == 0)
+
+                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);
-                }
-                else
-                {
-                    int s = saveDialog.FileName.LastIndexOf(".xml");
-                    for (int i = 0; i < 18; i++)
+                    if (all == 0)
                     {
-                        PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + LillyUtill.MaidActivePatch.maidNames[i]));
+                        PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);
+                    }
+                    else
+                    {
+                        int s = saveDialog.FileName.LastIndexOf(".xml");
+                        for (int i = 0; i < 18; i++)
+                        {
+                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + LillyUtill.MaidActivePatch.maidNames[i]));
+                        }
                     }
                 }
+
+            }
+            catch (Exception e)
+            {
+                PresetExpresetXmlLoader.myLog.LogMessage($"ShowDialogSaveRun {e.Message}");
             }
             isShowDialogSaveRun = false;
         }
@@ -328,19 +337,27 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         private void ShowDialogLoadRun()
         {
-            isShowDialogLoadRun = true;
-            if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)// 오픈했을때
+            isShowDialogLoadRun = true; 
+            try
             {
-                if (all == 0)
+
+                if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)// 오픈했을때
                 {
-                    PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
-                    // 파일 읽고 메이드에게 처리해주는 기능 
+                    if (all == 0)
+                    {
+                        PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
+                        // 파일 읽고 메이드에게 처리해주는 기능 
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 18; i++)
+                            PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
+                    }
                 }
-                else
-                {
-                    for (int i = 0; i < 18; i++)
-                        PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
-                }
+            }
+            catch (Exception e)
+            {
+                PresetExpresetXmlLoader.myLog.LogMessage($"ShowDialogLoadRun {e.Message}");
             }
             isShowDialogLoadRun = false;
         }

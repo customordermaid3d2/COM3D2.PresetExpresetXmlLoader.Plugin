@@ -30,18 +30,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\_lib2\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\COM3D2\COM3D2x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>lib\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\COM3D2\COM3D2x64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>lib\BepInEx.dll</HintPath>
@@ -52,16 +53,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="COM3D2.ExternalPreset.Managed">
-      <HintPath>..\..\_lib2\COM3D2.ExternalPreset.Managed.dll</HintPath>
+      <HintPath>H:\COM3D2\Sybaris\COM3D2.ExternalPreset.Managed.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="COM3D2.ExternalSaveData.Managed">
-      <HintPath>..\..\_lib2\COM3D2.ExternalSaveData.Managed.dll</HintPath>
+      <HintPath>H:\COM3D2\Sybaris\COM3D2.ExternalSaveData.Managed.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="COM3D2.LillyUtill">
-      <HintPath>C:\Downloads\plugin\COM3D2.LillyUtill.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>H:\COM3D2\BepinEx\plugins\COM3D2.LillyUtill.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
@@ -107,7 +107,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)*.dll" "C:\Downloads\plugin"
-copy "$(TargetDir)*.dll" "F:\COM3D2\BepinEx\plugins"</PostBuildEvent>
+    <PostBuildEvent>copy "$(targetpath)" "C:\Downloads\plugin" 
+copy "$(targetpath)" "h:\COM3D2\BepInEx\plugins" 
+copy "$(targetpath)" "h:\COM3D2-test\BepInEx\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>
