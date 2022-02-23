@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using CM3D2.ExternalSaveData.Managed;
-using COM3D25.LillyUtill;
+using COM3D2.LillyUtill;
 using COM3D2API;
 //using Ookii.Dialogs;
 using System;
@@ -109,12 +109,12 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 MyAttribute.PLAGIN_FULL_NAME
                 , new Action(delegate ()
                 { // 기어메뉴 아이콘 클릭시 작동할 기능
-                    //PresetExpresetXmlLoader.myLog.LogInfo("SystemShortcutAPI.AddButton", MyAttribute.PLAGIN_FULL_NAME, PresetExpresetXmlLoaderGUI.isGUIOn);
+                    PresetExpresetXmlLoader.myLog.LogInfo($"SystemShortcutAPI {myWindowRect.IsGUIOn}");
                     myWindowRect.IsGUIOn = !myWindowRect.IsGUIOn;
                 })
                 , MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString() // 표시될 툴팁 내용
                                                                                  // 표시될 아이콘
-                , MyUtill.ExtractResource(COM3D25.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
+                , MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
             // 아이콘은 이렇게 추가함
 
             // 파일 열기창 설정 부분. 이런건 구글링 하기
@@ -136,7 +136,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         }
         // 이렇게 해서 플러그인 실행 직후는 작동 완료
-
+        /*
         public void OnEnable()
         {
             //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
@@ -144,18 +144,18 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             PresetExpresetXmlLoaderGUI.myWindowRect.load();// 이건 창 위치 설정하는건데 소스 열어서  다로 공부해볼것
             //SceneManager.sceneLoaded += this.OnSceneLoaded;
         }
-
-       //public void Start()
-       //{
-       //    //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
-       //}
+        */
+        //public void Start()
+        //{
+        //    //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
+        //}
 
         //public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         //{
         //    PresetExpresetXmlLoaderGUI.myWindowRect.save();// 장면 이동시 GUI 창 위치 저장
         //}
 
-        private void Update()
+        public void Update()
         {
             //if (ShowCounter.Value.IsDown())
             //{
