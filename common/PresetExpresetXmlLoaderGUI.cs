@@ -1,18 +1,13 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using CM3D2.ExternalSaveData.Managed;
-using COM3D2.LillyUtill;
+//using COM3D2.LillyUtill;
 using COM3D2API;
 //using Ookii.Dialogs;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
@@ -29,7 +24,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         private static Vector2 scrollPosition;
 
         // 위치 저장용 테스트 json
-        public static MyWindowRect myWindowRect;
+        public static COM3D2.WindowRectUtill.Plugin.WindowRectUtill myWindowRect;
 
         //public string windowName= MyAttribute.PLAGIN_NAME;
         //public string FullName= MyAttribute.PLAGIN_NAME;
@@ -99,7 +94,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         {
             //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            myWindowRect = new MyWindowRect(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "PEXL");
+            myWindowRect = new COM3D2.WindowRectUtill.Plugin.WindowRectUtill(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "PEXL");
             //IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
             // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
@@ -114,7 +109,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 })
                 , MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString() // 표시될 툴팁 내용
                                                                                  // 표시될 아이콘
-                , MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
+                , ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
             // 아이콘은 이렇게 추가함
 
             // 파일 열기창 설정 부분. 이런건 구글링 하기
@@ -135,6 +130,16 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             };
 
         }
+
+        public static byte[] ExtractResource(Bitmap image)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, ImageFormat.Png);
+                return ms.ToArray();
+            }
+        }
+
         // 이렇게 해서 플러그인 실행 직후는 작동 완료
         /*
         public void OnEnable()
@@ -255,11 +260,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
                 //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
-                seleted = MaidActivePatch.SelectionGrid2(seleted, 3, 265, false);
+                seleted = MaidActiveUtill.Plugin.MaidActiveUtill.SelectionGrid(seleted);
 
                 GUI.enabled = true;
                 GUILayout.Label("edit");
-                Maid maid = MaidActivePatch.GetMaid(seleted);
+                Maid maid = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(seleted);
                 if (maid != null)
                 {
                     foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
@@ -269,7 +274,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                         if (GUI.changed)
                         {
                             result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
-                            PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetBool", result, itemp.items.Count());
+                            //PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetBool, result, itemp.items.Count()");
                             maid.body0.bonemorph.Blend();
                             GUI.changed = false;
                         }
@@ -282,7 +287,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                                 if (GUI.changed)
                                 {
                                     result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value, true);
-                                    PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetFloat", result, item.value);
+                                    //PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetFloat", result, item.value);
                                     maid.body0.bonemorph.Blend();
                                     GUI.changed = false;
                                 }
@@ -319,7 +324,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                         int s = saveDialog.FileName.LastIndexOf(".xml");
                         for (int i = 0; i < 18; i++)
                         {
-                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + MaidActivePatch.maidNames[i]));
+                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + MaidActiveUtill.Plugin.MaidActiveUtill.maidNames[i]));
                         }
                     }
                 }

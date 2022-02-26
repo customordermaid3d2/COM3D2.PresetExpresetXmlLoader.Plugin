@@ -1,17 +1,8 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
-using COM3D2.LillyUtill;
-using COM3D2API;
-using HarmonyLib;
-using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+using BepInEx.Logging;
+//using COM3D2.LillyUtill;
 using UnityEngine.SceneManagement;
+
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
@@ -34,7 +25,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
         public static PresetExpresetXmlLoader sample;
 
-        public static MyLog myLog;
+        //public static MyLog myLog;
+        internal static ManualLogSource myLog;
 
         /// <summary>
         /// 0.
@@ -43,7 +35,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public PresetExpresetXmlLoader()
         {
             sample = this;
-            myLog = new MyLog(Logger ,Config );
+           // myLog = new MyLog(Logger ,Config );
+            myLog = Logger;
             PresetExpresetXmlLoaderUtill.init();
         }
 
@@ -102,8 +95,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             // 여기 안으로 들어가 보면
 
             PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
-            MaidActivePatch.selectionGrid2 += PresetExpresetXmlLoaderUtill.SetMaid;
-            MaidActivePatch.setActiveMaid += PresetExpresetXmlLoaderUtill.SetMaid2;
+           // MaidActiveUtill.Plugin.MaidActiveUtill.
+            MaidActiveUtill.Plugin.MaidActiveUtill.setActiveMaidNum += PresetExpresetXmlLoaderUtill.SetMaid;
+            MaidActiveUtill.Plugin.MaidActiveUtill.setActiveMaid += PresetExpresetXmlLoaderUtill.SetMaid2;
             //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
         }
 
@@ -121,7 +115,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="mode"></param>
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            myLog.LogInfo("OnSceneLoaded", scene.name, scene.buildIndex);
+            myLog.LogInfo($"OnSceneLoaded , {scene.name}, {scene.buildIndex}");
             //  scene.buildIndex 는 쓰지 말자 제발
             scene_name = scene.name;
         }

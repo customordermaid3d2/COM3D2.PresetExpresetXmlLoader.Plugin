@@ -1,15 +1,9 @@
-﻿using CM3D2.ExternalPreset.Managed;
-using CM3D2.ExternalSaveData.Managed;
-using COM3D2.LillyUtill;
-using HarmonyLib;
+﻿using CM3D2.ExternalSaveData.Managed;
+//using COM3D2.LillyUtill;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
@@ -275,14 +269,14 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public static void SetMaid(int seleted)
         {
             //MaidActivePatch.GetMaid(seleted)
-            SetMaid(MaidActivePatch.GetMaid(seleted));
+            SetMaid(MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(seleted));
         }
 
         public static void SetMaid2(Maid maid)
         {
-            if(MaidActivePatch.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
+            if(MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
             {
-                PresetExpresetXmlLoader.myLog.LogInfo("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
+                //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
                 SetMaid(maid);
             }
         }
@@ -296,13 +290,13 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 return;
             }            
             
-            PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-1",maid.status.fullNameEnStyle, itemps.Count());
+            //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-1",maid.status.fullNameEnStyle, itemps.Count());
             
             foreach (var itemp in itemps)
             {
                 itemp.enable = ExSaveData.GetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, false);
 
-                PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-2",maid.status.fullNameEnStyle, itemp.name, itemp.items.Count());
+                //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-2",maid.status.fullNameEnStyle, itemp.name, itemp.items.Count());
                 foreach (Item item in itemp.items)
                 {
                     item.value=ExSaveData.GetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.defult);
@@ -326,7 +320,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 return;
             }
-            Maid maid1 = MaidActivePatch.GetMaid(maid);
+            Maid maid1 = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(maid);
             if (maid1 == null)
             {
                 return;
@@ -378,7 +372,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public static void Save(int maid, string f_strFileName)
         {
             // MyLog.LogMessage("save : " + f_strFileName);
-            Maid maid1 = MaidActivePatch.GetMaid(maid);
+            Maid maid1 = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(maid);
             if (maid1 == null)
             {
                 return;
