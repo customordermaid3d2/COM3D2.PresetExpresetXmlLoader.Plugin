@@ -1,4 +1,5 @@
 ﻿using CM3D2.ExternalSaveData.Managed;
+using LillyUtill.MyMaidActive;
 //using COM3D2.LillyUtill;
 using System;
 using System.Collections.Generic;
@@ -269,12 +270,12 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public static void SetMaid(int seleted)
         {
             //MaidActivePatch.GetMaid(seleted)
-            SetMaid(MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(seleted));
+            SetMaid(MaidActiveUtill.GetMaid(seleted));
         }
 
         public static void SetMaid2(Maid maid)
         {
-            if(MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
+            if(MaidActiveUtill.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
             {
                 //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
                 SetMaid(maid);
@@ -320,7 +321,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             {
                 return;
             }
-            Maid maid1 = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(maid);
+            Maid maid1 =MaidActiveUtill.GetMaid(maid);
             if (maid1 == null)
             {
                 return;
@@ -372,7 +373,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         public static void Save(int maid, string f_strFileName)
         {
             // MyLog.LogMessage("save : " + f_strFileName);
-            Maid maid1 = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(maid);
+            Maid maid1 = MaidActiveUtill.GetMaid(maid);
             if (maid1 == null)
             {
                 return;

@@ -8,6 +8,8 @@ using System.IO;
 using UnityEngine;
 using System.Drawing;
 using System.Drawing.Imaging;
+using LillyUtill.MyWindowRect;
+using LillyUtill.MyMaidActive;
 
 namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
@@ -24,7 +26,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         private static Vector2 scrollPosition;
 
         // 위치 저장용 테스트 json
-        public static COM3D2.WindowRectUtill.Plugin.WindowRectUtill myWindowRect;
+        public static WindowRectUtill myWindowRect;
 
         //public string windowName= MyAttribute.PLAGIN_NAME;
         //public string FullName= MyAttribute.PLAGIN_NAME;
@@ -92,9 +94,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void Awake()
         {
-            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
+            //Logger.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
 
-            myWindowRect = new COM3D2.WindowRectUtill.Plugin.WindowRectUtill(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "PEXL");
+            myWindowRect = new WindowRectUtill(config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "PEXL");
             //IsGUIOn = config.Bind("GUI", "isGUIOn", false); // 이건 베핀 설정값 지정용
             // 이건 단축키
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha3, KeyCode.LeftControl));
@@ -260,11 +262,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 // 여기는 출력된 메이드들 이름만 가져옴
                 // seleted 가 이름 위치 번호만 가져온건데
                 //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
-                seleted = MaidActiveUtill.Plugin.MaidActiveUtill.SelectionGrid(seleted);
+                seleted = MaidActiveUtill.SelectionGrid(seleted);
 
                 GUI.enabled = true;
                 GUILayout.Label("edit");
-                Maid maid = MaidActiveUtill.Plugin.MaidActiveUtill.GetMaid(seleted);
+                Maid maid = MaidActiveUtill.GetMaid(seleted);
                 if (maid != null)
                 {
                     foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
@@ -324,7 +326,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                         int s = saveDialog.FileName.LastIndexOf(".xml");
                         for (int i = 0; i < 18; i++)
                         {
-                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + MaidActiveUtill.Plugin.MaidActiveUtill.maidNames[i]));
+                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + MaidActiveUtill.maidNames[i]));
                         }
                     }
                 }
