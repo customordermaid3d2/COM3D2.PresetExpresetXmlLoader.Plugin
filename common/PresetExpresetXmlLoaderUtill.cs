@@ -10,36 +10,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 {
     public class PresetExpresetXmlLoaderUtill
     {
-        public static string[] item = new string[]
-        {
-                "WIDESLIDER.enable",
-                "PROPSET_OFF.enable",
-                "LIPSYNC_OFF.enable",
-                "HYOUJOU_OFF.enable",
-                "EYETOCAMERA_OFF.enable",
-                "MUHYOU.enable",
-                "FARMFIX.enable",
-                "EYEBALL.enable",
-                "EYE_ANG.enable",
-                "PELSCL.enable",
-                "SKTSCL.enable",
-                "THISCL.enable",
-                "THIPOS.enable",
-                "PELVIS.enable",
-                "FARMFIX.enable",
-                "SPISCL.enable",
-                "S0ASCL.enable",
-                "S1_SCL.enable",
-                "S1ASCL.enable",
-                "FACE_OFF.enable",
-                "FACEBLEND_OFF.enable",
-                "FACE_ANIME_SPEED",
-                "MABATAKI_SPEED",
-                "PELVIS",
-                "PELVIS.x",
-                "PELVIS.y",
-                "PELVIS.z"
-        };
 
         private static string[][] boneAndPropNameList = new string[][]
 {
@@ -188,6 +158,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             string name;
 
             itemps.Add(new Itemp("WIDESLIDER"));
+            itemps.Add(new Itemp("FARMFIX"));
 
             name = "EYE_ANG";
             itemps.Add(new Itemp(name
@@ -253,7 +224,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 ));
             }
 
-            PresetExpresetXmlLoader.myLog.LogInfo(itemps.Count());
+            PresetExpresetXmlLoader.log.LogInfo(itemps.Count());
             
 
         }
@@ -267,37 +238,20 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 ));
         }
 
-        public static void SetMaid(int seleted)
-        {
-            //MaidActivePatch.GetMaid(seleted)
-            SetMaid(MaidActiveUtill.GetMaid(seleted));
-        }
 
-        public static void SetMaid2(Maid maid)
-        {
-            if(MaidActiveUtill.GetMaid(PresetExpresetXmlLoaderGUI.seleted)== maid)
-            {
-                //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid2", maid.status.fullNameEnStyle, itemps.Count());
-                SetMaid(maid);
-            }
-        }
 
         public static void SetMaid(Maid maid)
-        {
-            //var maid = LillyUtill.MaidActivePatch.maids[PresetExpresetXmlLoaderGUI.seleted];
+        {            
             if (maid == null)
             {
-                PresetExpresetXmlLoader.myLog.LogWarning("SetMaid null");
+                PresetExpresetXmlLoader.log.LogWarning("SetMaid null");
                 return;
-            }            
-            
-            //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-1",maid.status.fullNameEnStyle, itemps.Count());
+            }                                   
             
             foreach (var itemp in itemps)
             {
                 itemp.enable = ExSaveData.GetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, false);
-
-                //PresetExpresetXmlLoader.myLog.LogInfo("SetMaid-2",maid.status.fullNameEnStyle, itemp.name, itemp.items.Count());
+                                
                 foreach (Item item in itemp.items)
                 {
                     item.value=ExSaveData.GetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.defult);
@@ -305,7 +259,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
         }
 
-        // ExSaveData.GetFloat(maid, MaidVoicePitch.PluginName, "EYE_ANG.angle", 0f);
 
         public static void Load(int maid, string strFileName)
         {
@@ -328,11 +281,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
             for (int i = 0; i < nods.Count; i++)
             {
-                PresetExpresetXmlLoader.myLog.LogInfo(nods[i].Attributes["name"].Value);
+                PresetExpresetXmlLoader.log.LogInfo(nods[i].Attributes["name"].Value);
                 ExSaveData.SetXml(maid1, nods[i].Attributes["name"].Value, nods[i]);
             }
             maid1.body0.bonemorph.Blend();
-            //MaidVoicePitch_UpdateSliders(LillyUtill.MaidActivePatch.maids[maid]);
         }
 
 
@@ -372,7 +324,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="f_strFileName">저장될 파일명</param>
         public static void Save(int maid, string f_strFileName)
         {
-            // MyLog.LogMessage("save : " + f_strFileName);
             Maid maid1 = MaidActiveUtill.GetMaid(maid);
             if (maid1 == null)
             {
@@ -381,13 +332,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             XmlDocument xmlDocument = new XmlDocument();
             bool flag2 = false;
             XmlNode xmlNode = xmlDocument.AppendChild(xmlDocument.CreateElement("plugins"));
-            //AccessTools.Field(typeof(ExPreset), "exsaveNodeNameMap").GetValue(null)
-            //var a= typeof(ExPreset).GetField("exsaveNodeNameMap").GetValue(null) as HashSet<string>;
-            //if (a==null)
-            //{
-            //    MyLog.LogMessage("exsaveNodeNameMap null");
-            //    return;
-            //}
+
             foreach (string pluginName in new string[] { "CM3D2.MaidVoicePitch", "COM3D2.AutoConverter" })
             {
                 XmlElement xmlElement = xmlDocument.CreateElement("plugin");

@@ -28,37 +28,6 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         // 위치 저장용 테스트 json
         public static WindowRectUtill myWindowRect;
 
-        //public string windowName= MyAttribute.PLAGIN_NAME;
-        //public string FullName= MyAttribute.PLAGIN_NAME;
-        //public string ShortName="PEXL";
-
-
-        /*
-        public bool IsOpen
-        {
-            get => myWindowRect.IsOpen;
-            set
-            {
-                myWindowRect.IsOpen = value;
-                //if (value)
-                //{
-                //    windowName = FullName;
-                //}
-                //else
-                //{
-                //    windowName = ShortName;
-                //}
-            }
-        }
-        // GUI ON OFF 설정파일로 저장
-        private static ConfigEntry<bool> IsGUIOn;
-
-        public static bool isGUIOn
-        {
-            get => IsGUIOn.Value;
-            set => IsGUIOn.Value = value;
-        }
-        */
         public static System.Windows.Forms.OpenFileDialog openDialog;
         public static System.Windows.Forms.SaveFileDialog saveDialog;
         //VistaOpenFileDialog openDialog = new VistaOpenFileDialog();
@@ -142,37 +111,8 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             }
         }
 
-        // 이렇게 해서 플러그인 실행 직후는 작동 완료
-        /*
-        public void OnEnable()
-        {
-            //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.OnEnable");
-
-            PresetExpresetXmlLoaderGUI.myWindowRect.load();// 이건 창 위치 설정하는건데 소스 열어서  다로 공부해볼것
-            //SceneManager.sceneLoaded += this.OnSceneLoaded;
-        }
-        */
-        //public void Start()
-        //{
-        //    //MyLog.LogMessage("PresetExpresetXmlLoaderGUI.Start");
-        //}
-
-        //public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        //{
-        //    PresetExpresetXmlLoaderGUI.myWindowRect.save();// 장면 이동시 GUI 창 위치 저장
-        //}
-
         public void Update()
         {
-            //if (ShowCounter.Value.IsDown())
-            //{
-            //    MyLog.LogMessage("IsDown", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
-            //}
-            //if (ShowCounter.Value.IsPressed())
-            //{
-            //    MyLog.LogMessage("IsPressed", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
-            //}
-            // 단축키 눌렀을때 GUI 키고 끌수 있게 해주는 부분
             if (ShowCounter.Value.IsUp())// 단축키가 일치할때
             {
                 myWindowRect.IsGUIOn = !myWindowRect.IsGUIOn;// 보이거나 안보이게. 이런 배열이였네 지웠음
@@ -186,14 +126,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
             if (!myWindowRect.IsGUIOn)
                 return;
 
-            //GUI.skin.window = ;
-
-            //myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUI.skin.box);
-            // 별도 창을 띄우고 WindowFunction 를 실행함. 이건 스킨 설정 부분인데 따로 공부할것
             myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, "", GUI.skin.box);
         }
 
         string[] type = new string[] { "one", "all" };
+        Maid maid;
 
         // 창일 따로 뜬 부분에서 작동
         public void WindowFunction(int id)
@@ -229,7 +166,9 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 {
                     GUILayout.Label("maid null");
                 }
+
                 GUILayout.BeginHorizontal();
+
                 if (GUILayout.Button("load"))
                 {
                     if (!isShowDialogLoadRun)
@@ -246,6 +185,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                         ShowDialogSaveRun();
                     }
                 }
+                if (GUILayout.Button("del"))
+                {
+                    foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
+                        ExSaveData.Remove(maid, "CM3D2.MaidVoicePitch", itemp.name);
+                }
 
                 GUILayout.EndHorizontal();
 
@@ -253,20 +197,11 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                 GUILayout.Label("option");
 
                 all = GUILayout.SelectionGrid(all, type, 2);
-                //if (all == 1)
-                //{
-                //    GUI.enabled = false;
-                //}
-
-                //GUILayout.Label("maid select");
-                // 여기는 출력된 메이드들 이름만 가져옴
-                // seleted 가 이름 위치 번호만 가져온건데
-                //seleted = GUILayout.SelectionGrid(seleted, LillyUtill.MaidActivePatch.maidNames, 1);
                 seleted = MaidActiveUtill.SelectionGrid(seleted);
 
                 GUI.enabled = true;
                 GUILayout.Label("edit");
-                Maid maid = MaidActiveUtill.GetMaid(seleted);
+                maid = MaidActiveUtill.GetMaid(seleted);
                 if (maid != null)
                 {
                     foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
@@ -275,8 +210,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
 
                         if (GUI.changed)
                         {
-                            result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable, true);
-                            //PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetBool, result, itemp.items.Count()");
+                            result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable);
                             maid.body0.bonemorph.Blend();
                             GUI.changed = false;
                         }
@@ -288,8 +222,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
                                 item.value = GUILayout.HorizontalSlider(item.value, 0, 2f);
                                 if (GUI.changed)
                                 {
-                                    result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value, true);
-                                    //PresetExpresetXmlLoader.myLog.LogInfo("ExSaveData.SetFloat", result, item.value);
+                                    result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value);                                    
                                     maid.body0.bonemorph.Blend();
                                     GUI.changed = false;
                                 }

@@ -100,9 +100,6 @@
     <Compile Include="..\common\PresetExpresetXmlLoader.cs">
       <Link>PresetExpresetXmlLoader.cs</Link>
     </Compile>
-    <Compile Include="..\common\PresetExpresetXmlLoaderGUI.cs">
-      <Link>PresetExpresetXmlLoaderGUI.cs</Link>
-    </Compile>
     <Compile Include="..\common\PresetExpresetXmlLoaderUtill.cs">
       <Link>PresetExpresetXmlLoaderUtill.cs</Link>
     </Compile>

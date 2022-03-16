@@ -1,6 +1,12 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using CM3D2.ExternalSaveData.Managed;
+using COM3D2API;
 using LillyUtill.MyMaidActive;
+using LillyUtill.MyWindowRect;
+using System;
+using System.IO;
+using UnityEngine;
 //using COM3D2.LillyUtill;
 using UnityEngine.SceneManagement;
 
@@ -19,15 +25,24 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
     //[BepInProcess("COM3D2x64.exe")]
     public class PresetExpresetXmlLoader : BaseUnityPlugin
     {
-        // 단축키 설정파일로 연동
-        //private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
+        internal static ManualLogSource log;
 
-        //Harmony harmony;
+        public static WindowRectUtill myWindowRect;
 
-        public static PresetExpresetXmlLoader sample;
 
-        //public static MyLog myLog;
-        internal static ManualLogSource myLog;
+        string[] type = new string[] { "one", "all" };
+        internal static Maid maid;
+
+        public static int seleted;
+        private int all;
+
+        public static System.Windows.Forms.OpenFileDialog openDialog;
+        public static System.Windows.Forms.SaveFileDialog saveDialog;
+
+        static bool isShowDialogSaveRun = false;
+        static bool isShowDialogLoadRun = false;
+        private bool result;
+
 
         /// <summary>
         /// 0.
@@ -35,10 +50,7 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public PresetExpresetXmlLoader()
         {
-            sample = this;
-           // myLog = new MyLog(Logger ,Config );
-            myLog = Logger;
-            PresetExpresetXmlLoaderUtill.init();
+            log = Logger;
         }
 
         /// <summary>
@@ -49,19 +61,34 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         ///  https://docs.unity3d.com/kr/530/Manual/ExecutionOrder.html
         ///  를 참조하면 제일 좋음
         /// </summary>
-       public void Awake()
-       {
-           myLog.LogMessage("Awake");
-           myLog.LogMessage("https://github.com/customordermaid3d2/COM3D2.PresetExpresetXmlLoader.Plugin");
-       
-           // 단축키 기본값 설정
-           //ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
-       
-           
-       
-           // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
-       }
+        public void Awake()
+        {
+            log.LogMessage("Awake");
+            log.LogMessage("https://github.com/customordermaid3d2/COM3D2.PresetExpresetXmlLoader.Plugin");
 
+            PresetExpresetXmlLoaderUtill.init();
+
+            myWindowRect = new WindowRectUtill(WindowFunctionBody, Config, Logger, MyAttribute.PLAGIN_NAME, "PEXL");
+
+            MaidActiveUtill.setActiveMaidNum += SetMaid;
+            MaidActiveUtill.deactivateMaidNum += SetMaidd;
+        }
+
+        public static void SetMaid(int seleted)
+        {
+            if (PresetExpresetXmlLoader.seleted == seleted)
+            {
+                PresetExpresetXmlLoaderUtill.SetMaid(maid = MaidActiveUtill.GetMaid(seleted));
+            }
+        }
+
+        public static void SetMaidd(int seleted)
+        {
+            if (PresetExpresetXmlLoader.seleted == seleted)
+            {
+                maid = null;
+            }
+        }
 
         /// <summary>
         /// 2. 그다음 플러그인을 켰을때 작동되는 함수
@@ -69,13 +96,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void OnEnable()
         {
-            myLog.LogMessage("OnEnable");
+            log.LogMessage("OnEnable");
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
 
-            // 하모니 패치
-            // 이게 게임 원래 메소들을 해킹해서 값을 바꿔주게 해주는 역활
-            //harmony = Harmony.CreateAndPatchAll(typeof(PresetExpresetXmlLoaderPatch));
 
         }
 
@@ -89,18 +113,34 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void Start()
         {
-            myLog.LogMessage("Start");
+            log.LogMessage("Start");
 
-            // 어쨋든 기본 유니티 앤진 구조는 이러함
-            // 그리고 유니티 앤진 자체가 오브젝트 안에 오브젝트를 추가할수 있음
-            // 이게 그걸 이용한 방식
-            // 여기 안으로 들어가 보면
+            // 파일 열기창 설정 부분. 이런건 구글링 하기
+            openDialog = new System.Windows.Forms.OpenFileDialog()
+            {
+                // 기본 확장자
+                DefaultExt = "xml",
+                // 기본 디렉토리
+                InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset"),
+                // 선택 가능 확장자
+                Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"
+            };
+            saveDialog = new System.Windows.Forms.SaveFileDialog()
+            {
+                DefaultExt = "xml",
+                InitialDirectory = Path.Combine(GameMain.Instance.SerializeStorageManager.StoreDirectoryPath, "preset"),
+                Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"
+            };
 
-            PresetExpresetXmlLoaderGUI.Install(gameObject, Config);
-           // MaidActiveUtill.Plugin.MaidActiveUtill.
-            MaidActiveUtill.setActiveMaidNum += PresetExpresetXmlLoaderUtill.SetMaid;
-           MaidActiveUtill.setActiveMaid += PresetExpresetXmlLoaderUtill.SetMaid2;
-            //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(COM3D2.PresetExpresetXmlLoader.Plugin.Properties.Resources.icon));
+            SystemShortcutAPI.AddButton(
+                MyAttribute.PLAGIN_FULL_NAME
+                , new Action(delegate ()
+                { // 기어메뉴 아이콘 클릭시 작동할 기능                    
+                    myWindowRect.IsGUIOn = !myWindowRect.IsGUIOn;
+                })
+                , MyAttribute.PLAGIN_NAME  // 표시될 툴팁 내용                                                                                 
+                , Properties.Resources.icon);// 표시될 아이콘
+
         }
 
         public string scene_name = string.Empty;
@@ -117,15 +157,15 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <param name="mode"></param>
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            myLog.LogInfo($"OnSceneLoaded , {scene.name}, {scene.buildIndex}");
+            log.LogInfo($"OnSceneLoaded , {scene.name}, {scene.buildIndex}");
             //  scene.buildIndex 는 쓰지 말자 제발
             scene_name = scene.name;
         }
 
-       // public void FixedUpdate()
-       // {
-       //
-       // }
+        // public void FixedUpdate()
+        // {
+        //
+        // }
 
         /// <summary>
         /// 여기는 게임 로직 부분
@@ -149,22 +189,165 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// <summary>
         /// 여기도 마찬가지
         /// </summary>
-      // public void LateUpdate()
-      // {
-      //
-      // }
+        // public void LateUpdate()
+        // {
+        //
+        // }
 
-        
+
         /// <summary>
         /// 여기가 GUI 작성 부분
         /// 지금 이 플러그인은 약간 특이하게 다른족에서 GUI 불러들임
         /// 자세한건 위에 다시 설명해줌
         /// </summary>
-       // public void OnGUI()
-       // {
-       //   
-       // }
+        public void OnGUI()
+        {
+            myWindowRect.OnGUI();
+        }
 
+        private void WindowFunctionBody(int id)
+        {
+
+            // 메이드가 있을때만 여기 아래 기능들 클릭 가능
+            //GUI.enabled = LillyUtill.MaidActivePatch.GetMaid(seleted) != null;
+            if (GUI.enabled)
+            {
+                GUILayout.Label("");
+            }
+            else
+            {
+                GUILayout.Label("maid null");
+            }
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("load"))
+            {
+                if (!isShowDialogLoadRun)
+                {
+                    //Task.Factory.StartNew(ShowDialogLoadRun);
+                    ShowDialogLoadRun();
+                }
+            }
+            if (GUILayout.Button("save"))
+            {
+                if (!isShowDialogSaveRun)
+                {
+                    //Task.Factory.StartNew(ShowDialogSaveRun);
+                    ShowDialogSaveRun();
+                }
+            }
+            if (GUILayout.Button("del"))
+            {
+                foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
+                    ExSaveData.Remove(maid, "CM3D2.MaidVoicePitch", itemp.name);
+            }
+
+            GUILayout.EndHorizontal();
+
+            // GUI.enabled = true;
+            GUILayout.Label("option");
+
+            all = GUILayout.SelectionGrid(all, type, 2);
+            seleted = MaidActiveUtill.SelectionGrid(seleted);
+            if (GUI.changed)
+            {
+                PresetExpresetXmlLoaderUtill.SetMaid(maid = MaidActiveUtill.GetMaid(seleted));
+                GUI.changed = false;
+            }
+
+            //GUI.enabled = true;
+            GUILayout.Label("edit");
+            if (maid != null)
+            {
+                foreach (var itemp in PresetExpresetXmlLoaderUtill.itemps)
+                {
+                    itemp.enable = GUILayout.Toggle(itemp.enable, itemp.name);
+
+                    if (GUI.changed)
+                    {
+                        result = ExSaveData.SetBool(maid, "CM3D2.MaidVoicePitch", itemp.name, itemp.enable);
+                        maid.body0.bonemorph.Blend();
+                        GUI.changed = false;
+                    }
+
+                    if (itemp.enable)
+                    {
+                        foreach (var item in itemp.items)
+                        {
+                            item.value = GUILayout.HorizontalSlider(item.value, 0, 2f);
+                            if (GUI.changed)
+                            {
+                                result = ExSaveData.SetFloat(maid, "CM3D2.MaidVoicePitch", item.name, item.value);
+                                maid.body0.bonemorph.Blend();
+                                GUI.changed = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        private void ShowDialogSaveRun()
+        {
+            isShowDialogSaveRun = true;
+            try
+            {
+
+                if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    if (all == 0)
+                    {
+                        PresetExpresetXmlLoaderUtill.Save(seleted, saveDialog.FileName);
+                    }
+                    else
+                    {
+                        int s = saveDialog.FileName.LastIndexOf(".xml");
+                        for (int i = 0; i < 18; i++)
+                        {
+                            PresetExpresetXmlLoaderUtill.Save(i, saveDialog.FileName.Insert(s, "_" + MaidActiveUtill.maidNames[i]));
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                PresetExpresetXmlLoader.log.LogMessage($"ShowDialogSaveRun {e.Message}");
+            }
+            isShowDialogSaveRun = false;
+        }
+
+        /// <summary>
+        /// 원래 함수를 별도로 만든게 아닌데 오류땜에 뺏다가 현상 유지됨..
+        /// </summary>
+        private void ShowDialogLoadRun()
+        {
+            isShowDialogLoadRun = true;
+            try
+            {
+
+                if (openDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)// 오픈했을때
+                {
+                    if (all == 0)
+                    {
+                        PresetExpresetXmlLoaderUtill.Load(seleted, openDialog.FileName);
+                        // 파일 읽고 메이드에게 처리해주는 기능 
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 18; i++)
+                            PresetExpresetXmlLoaderUtill.Load(i, openDialog.FileName);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                PresetExpresetXmlLoader.log.LogMessage($"ShowDialogLoadRun {e.Message}");
+            }
+            isShowDialogLoadRun = false;
+        }
 
         /// <summary>
         /// 플러그인 껏을때 작동
@@ -173,12 +356,10 @@ namespace COM3D2.PresetExpresetXmlLoader.Plugin
         /// </summary>
         public void OnDisable()
         {
-            myLog.LogMessage("OnDisable");
+            log.LogMessage("OnDisable");
 
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
-            //harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
-            //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
         }
 
     }
